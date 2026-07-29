@@ -1,0 +1,150 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>W...</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111827;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+}
+
+.countdown {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.block {
+    background: #1f2937;
+    padding: 20px;
+    border-radius: 15px;
+    min-width: 80px;
+}
+
+.number {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 2.8rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .block {
+        min-width: 60px;
+        padding: 15px;
+    }
+
+    .number {
+        font-size: 2rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🚀 W...</h1>
+<div class="subtitle">Une nouvelle expérience arrive bientôt</div>
+
+<div class="countdown">
+
+<div class="block">
+<div class="number" id="days">0</div>
+<div class="label">jours</div>
+</div>
+
+<div class="block">
+<div class="number" id="hours">0</div>
+<div class="label">heures</div>
+</div>
+
+<div class="block">
+<div class="number" id="minutes">0</div>
+<div class="label">minutes</div>
+</div>
+
+<div class="block">
+<div class="number" id="seconds">0</div>
+<div class="label">secondes</div>
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+// Date de mise en ligne : vendredi à minuit (heure française)
+const targetDate = new Date("2026-07-31T00:00:00+02:00");
+
+function updateCountdown() {
+
+    const now = new Date();
+    const difference = targetDate - now;
+
+    if (difference <= 0) {
+        document.querySelector(".container").innerHTML =
+        "<h1>🎉 C'est parti !</h1>";
+        return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = seconds;
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+</script>
+
+</body>
+</html>
+```
