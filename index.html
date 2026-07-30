@@ -67,6 +67,25 @@ body {
 .label { margin-top:8px; font-size:12px; color:#a1a1aa; text-transform:uppercase; }
 .message { margin-top:35px; color:#a1a1aa; font-size:18px; transition:.5s; }
 
+/* Cartes = boutons */
+.card { cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+        transition:transform .12s ease, box-shadow .2s ease; }
+.card:active, .card.tap { transform:scale(.93); box-shadow:0 0 28px rgba(245,158,11,.55); }
+
+/* Texte secret */
+.reveal {
+    margin:32px auto 0; max-width:540px; padding:0 22px;
+    color:#f4f4f5; font-size:19px; line-height:1.55;
+    opacity:0; transform:translateY(12px);
+    transition:opacity .9s ease, transform .9s ease;
+    pointer-events:none;
+}
+.reveal.show { opacity:1; transform:none; }
+.reveal .brand {
+    color:#F59E0B; font-weight:700; letter-spacing:2px;
+    text-shadow:0 0 14px rgba(245,158,11,.6);
+}
+
 /* Confettis */
 .confetti { position:fixed; width:8px; height:8px; pointer-events:none; z-index:5; animation:explode .9s forwards linear; }
 @keyframes explode {
@@ -90,12 +109,13 @@ body {
 <div class="container">
     <div class="logo" id="logo">W...</div>
     <div class="countdown">
-        <div class="card"><div class="number" id="days">00</div><div class="label">jours</div></div>
-        <div class="card"><div class="number" id="hours">00</div><div class="label">heures</div></div>
-        <div class="card"><div class="number" id="minutes">00</div><div class="label">minutes</div></div>
-        <div class="card"><div class="number" id="seconds">00</div><div class="label">secondes</div></div>
+        <div class="card" data-k="days"><div class="number" id="days">00</div><div class="label">jours</div></div>
+        <div class="card" data-k="hours"><div class="number" id="hours">00</div><div class="label">heures</div></div>
+        <div class="card" data-k="minutes"><div class="number" id="minutes">00</div><div class="label">minutes</div></div>
+        <div class="card" data-k="seconds"><div class="number" id="seconds">00</div><div class="label">secondes</div></div>
     </div>
     <div class="message" id="message">Quelque chose approche.</div>
+    <div class="reveal" id="reveal">Tu es trop vieux pour changer de pote ? Alors autant essayer de t'organiser avec eux pour que ça se passe au mieux... Tout ça grâce à <span class="brand">WHENLY</span>.<br>Bientôt chez toi...</div>
 </div>
 
 <script>
@@ -118,7 +138,7 @@ setInterval(updateCountdown,1000);
 updateCountdown();
 
 // Messages dynamiques
-const messages=["Quelque chose approche.","Plus très longtemps.","Préparez-vous.","Une nouvelle expérience arrive.","Debout soldat.","Je suis trop vieux pour changer de potes.","Attention il est fatigué, son pantalon va tomber."];
+const messages=["Quelque chose approche.","Plus très longtemps.","Préparez-vous.","Une nouvelle expérience arrive."];
 let index=0;
 setInterval(()=>{
     message.style.opacity=0;
@@ -212,6 +232,37 @@ function scheduleGhost(){
     setTimeout(scheduleGhost, rand(1400, 4200)); // apparitions au hasard dans le temps
 }
 setTimeout(scheduleGhost, 1200);
+
+/* ===== Combinaison secrète : heures, jours, minutes, secondes ===== */
+const combo = ["hours","days","minutes","seconds"];
+let progress = [];
+let unlocked = false;
+const revealEl = document.getElementById("reveal");
+
+document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+        // retour visuel au tap
+        card.classList.add("tap");
+        setTimeout(() => card.classList.remove("tap"), 180);
+        if (unlocked) return;
+
+        const k = card.dataset.k;
+        progress.push(k);
+        // vérifie que la séquence reste un début valide de la combinaison
+        const stillValid = combo.slice(0, progress.length).every((c, i) => c === progress[i]);
+        if (!stillValid) {
+            // mauvais ordre -> on repart (en autorisant ce clic comme nouveau départ)
+            progress = (k === combo[0]) ? [k] : [];
+        }
+        if (progress.length === combo.length) {
+            unlocked = true;
+            revealEl.classList.add("show");
+            // petite pluie de confettis pour fêter ça
+            const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+            for (let i = 0; i < 8; i++) setTimeout(() => createConfetti(cx, cy), i * 60);
+        }
+    });
+});
 </script>
 </body>
 </html>
